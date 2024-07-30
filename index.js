@@ -6,6 +6,13 @@ const app = express();
 app.use(express.json());
 
 // Endpoint to handle POST requests
+app.get("/api/data", (req, res) => {
+  
+    res
+      .status(200)
+      .json({ message: "Hello world!"});
+  });
+  
 app.post("/api/data", (req, res) => {
   const data = req.body;
   console.log("Received data:", data);

@@ -1,17 +1,19 @@
 // index.js
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+const express = require("express");
+const fs = require("fs");
+const path = require("path");
 const app = express();
+const cors = require("cors");
 
+app.use(cors);
 // Middleware to parse JSON bodies
 app.use(express.json());
 
 // Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Log incoming requests
-app.post('/log', (req, res) => {
+app.post("/log", (req, res) => {
   const logData = {
     timestamp: new Date().toISOString(),
     ip: req.ip,
@@ -19,18 +21,18 @@ app.post('/log', (req, res) => {
     body: req.body,
   };
 
-  console.log('Received log:', logData);
+  console.log("Received log:", logData);
 
   // Save the log to a file
-  const logFilePath = path.join(__dirname, 'logs', `${Date.now()}.json`);
+  const logFilePath = path.join(__dirname, "logs", `${Date.now()}.json`);
   fs.writeFileSync(logFilePath, JSON.stringify(logData, null, 2));
 
-  res.status(200).json({ message: 'Log received' });
+  res.status(200).json({ message: "Log received" });
 });
 
 // Serve logs list with basic HTML and CSS
-app.get('/logs', (req, res) => {
-  const logFiles = fs.readdirSync(path.join(__dirname, 'logs'));
+app.get("/logs", (req, res) => {
+  const logFiles = fs.readdirSync(path.join(__dirname, "logs"));
   let html = `
     <html>
       <head>
@@ -68,7 +70,7 @@ app.get('/logs', (req, res) => {
           <h1>Log Viewer</h1>
           <ul>
   `;
-  logFiles.forEach(file => {
+  logFiles.forEach((file) => {
     html += `<li><a href="/logs/${file}">${file}</a></li>`;
   });
   html += `
@@ -81,9 +83,9 @@ app.get('/logs', (req, res) => {
 });
 
 // Serve a specific log file
-app.get('/logs/:logFile', (req, res) => {
+app.get("/logs/:logFile", (req, res) => {
   const logFile = req.params.logFile;
-  const logFilePath = path.join(__dirname, 'logs', logFile);
+  const logFilePath = path.join(__dirname, "logs", logFile);
   res.sendFile(logFilePath);
 });
 
